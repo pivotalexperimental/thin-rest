@@ -1,5 +1,6 @@
 module ThinRest
   class Connection < Thin::Connection
+    HEAD = "HTTP/1.1 200 OK\r\nConnection: close\r\nServer: Thin Rest Server\r\n".freeze
     attr_reader :resource, :rack_request
 
     def process
@@ -11,6 +12,18 @@ module ThinRest
       end
     end
 
+    def send_head
+      send_data(HEAD)
+    end
+
+    def send_body(data)
+      length = send_data("Content-Length: #{data.length}\r\n\r\n")
+      length += send_data(data)
+      close_connection_after_writing
+    ensure
+      terminate_request
+    end
+
     def unbind
       super
       resource.unbind if resource
@@ -19,6 +32,7 @@ module ThinRest
     end
 
     def handle_error(error)
+      log_error error
       close_connection rescue nil
     rescue Exception => unexpected_error
       log_error unexpected_error
@@ -27,7 +41,7 @@ module ThinRest
     protected
     def guard_against_errors
       yield
-    rescue InvalidRouteError => e
+    rescue RoutingError => e
       RAILS_DEFAULT_LOGGER.info "Invalid route: #{rack_request.path_info}"
     rescue ResourceInvalid => e
       RAILS_DEFAULT_LOGGER.info "Invalid resource: #{e.message}, route=#{rack_request.path_info}"
@@ -36,9 +50,12 @@ module ThinRest
     end
     
     def get_resource(request)
-      path_parts(request).inject(Resources::Root.new(:connection => self)) do |resource, child_resource_name|
+      path_parts(request).inject(root_resource) do |resource, child_resource_name|
         resource.locate(child_resource_name)
       end
+    end
+
+    def root_resource
     end
 
     def path_parts(request)

@@ -35,7 +35,6 @@ module ThinRest
     ANY = Object.new
 
     property :connection
-    delegate :request, :response, :to => :connection
     attr_reader :event, :env
 
     def initialize(env={})
@@ -46,26 +45,29 @@ module ThinRest
       after_initialize
     end
 
+    def request; connection.request; end
+    def response; connection.response; end
+
     def get
-      connection.send_response(do_get || "")
+      connection.send_body(do_get || "")
     rescue TransientState::RecordInvalid => e
       raise ResourceInvalid, e
     end
 
     def post
-      connection.send_response(do_post || "")
+      connection.send_body(do_post || "")
     rescue TransientState::RecordInvalid => e
       raise ResourceInvalid, e
     end
 
     def put
-      connection.send_response(do_put || "")
+      connection.send_body(do_put || "")
     rescue TransientState::RecordInvalid => e
       raise ResourceInvalid, e
     end
 
     def delete
-      connection.send_response(do_delete || "")
+      connection.send_body(do_delete || "")
     rescue TransientState::RecordInvalid => e
       raise ResourceInvalid, e
     end
