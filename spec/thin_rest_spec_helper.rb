@@ -61,4 +61,16 @@ class Subresource < ThinRest::Resource
   def do_get
     "GET response"
   end
+
+  def do_post
+    "POST response"
+  end
+
+  def do_put
+    "PUT response"
+  end
+
+  def do_delete
+    "DELETE response"
+  end
 end
