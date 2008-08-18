@@ -41,10 +41,6 @@ module ThinRest
     protected
     def guard_against_errors
       yield
-    rescue RoutingError => e
-      RAILS_DEFAULT_LOGGER.info "Invalid route: #{rack_request.path_info}"
-    rescue ResourceInvalid => e
-      RAILS_DEFAULT_LOGGER.info "Invalid resource: #{e.message}, route=#{rack_request.path_info}"
     rescue Exception => e
       handle_error e
     end
@@ -56,6 +52,7 @@ module ThinRest
     end
 
     def root_resource
+      raise NotImplementedError
     end
 
     def path_parts(request)

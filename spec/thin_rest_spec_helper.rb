@@ -14,6 +14,35 @@ Spec::Runner.configure do |config|
     stub(EventMachine).set_comm_inactivity_timeout {raise "EventMachine.set_comm_inactivity_timeout needs to be stubbed or mocked out"}
     stub(EventMachine).report_connection_error_status {0}
     stub(EventMachine).add_timer
+    Thin::Logging.silent = !self.class.thin_logging
+    Thin::Logging.debug = self.class.thin_logging
+    Thin::Logging.trace = false
+  end
+end
+
+module Spec::Example::ExampleGroupMethods
+  def thin_logging
+    if @thin_logging.nil?
+      return false
+    else
+      @thin_logging
+    end
+  end
+  attr_writer :thin_logging
+end
+
+module Spec::Example::ExampleMethods
+  def create_connection(guid = Guid.new.to_s)
+    connection = TestConnection.new(guid)
+    connection.backend = Object.new
+    stub(connection.backend).connection_finished
+    connection
+  end
+
+  def stub_send_data
+    stub(EventMachine).send_data do |signature, data, data_length|
+      data_length
+    end
   end
 end
 
@@ -30,6 +59,6 @@ end
 
 class Subresource < ThinRest::Resource
   def do_get
-    "Subresource response"
+    "GET response"
   end
 end

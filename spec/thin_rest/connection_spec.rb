@@ -4,19 +4,6 @@ module ThinRest
   describe Connection do
     attr_reader :connection
 
-    def create_connection(guid = Guid.new.to_s)
-      connection = ThinRest::Connection.new(guid)
-      connection.backend = Object.new
-      stub(connection.backend).connection_finished
-      connection
-    end
-
-    def stub_send_data
-      stub(EventMachine).send_data do |signature, data, data_length|
-        data_length
-      end
-    end
-
     describe "#send_head" do
       before do
         @connection = create_connection

@@ -12,7 +12,7 @@ module ThinRest
 
       def route(name, resource_type_name=nil, &block)
         routes[name] = block || lambda do |env, name|
-          resource_type = resource_type_name.split('::').inject(Resources) do |mod, next_mod_name|
+          resource_type = resource_type_name.split('::').inject(Object) do |mod, next_mod_name|
             mod.const_get(next_mod_name)
           end
           resource_type.new(env)
@@ -49,27 +49,23 @@ module ThinRest
     def response; connection.response; end
 
     def get
+      connection.send_head
       connection.send_body(do_get || "")
-    rescue TransientState::RecordInvalid => e
-      raise ResourceInvalid, e
     end
 
     def post
+      connection.send_head
       connection.send_body(do_post || "")
-    rescue TransientState::RecordInvalid => e
-      raise ResourceInvalid, e
     end
 
     def put
+      connection.send_head
       connection.send_body(do_put || "")
-    rescue TransientState::RecordInvalid => e
-      raise ResourceInvalid, e
     end
 
     def delete
+      connection.send_head
       connection.send_body(do_delete || "")
-    rescue TransientState::RecordInvalid => e
-      raise ResourceInvalid, e
     end
 
     def locate(name)
@@ -79,7 +75,6 @@ module ThinRest
     end
 
     def unbind
-      RAILS_DEFAULT_LOGGER.info "#{Clock.now.to_f} - #{self.class}#unbind : Connection#signature=#{connection.signature}"
     end
 
     protected
