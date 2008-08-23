@@ -48,7 +48,7 @@ end
 
 class TestConnection < ThinRest::Connection
   def root_resource
-    Root
+    Root.new(:connection => self)
   end
 end
 
