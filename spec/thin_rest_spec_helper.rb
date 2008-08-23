@@ -55,6 +55,9 @@ end
 class Root < ThinRest::Resource
   property :connection
   route 'subresource', 'Subresource'
+  route 'block_subresource' do |env, name|
+    BlockSubresource.new(env)
+  end
 end
 
 class Subresource < ThinRest::Resource
@@ -73,4 +76,8 @@ class Subresource < ThinRest::Resource
   def do_delete
     "DELETE response"
   end
+end
+
+class BlockSubresource < ThinRest::Resource
+
 end

@@ -3,6 +3,29 @@ require File.expand_path("#{File.dirname(__FILE__)}/../thin_rest_spec_helper")
 module ThinRest
   describe Resource do
     attr_reader :connection
+
+    describe "#locate" do
+      attr_reader :root
+      self.thin_logging = true
+      before do
+        @connection = create_connection
+        stub(EventMachine).close_connection
+        @root = Root.new(:connection => connection)
+      end
+
+      context "/subresource - route is defined using a String" do
+        it "returns an instance of Subresource" do
+          root.locate("subresource").class.should == Subresource
+        end
+      end
+
+      context "/block_subresource - route is defined using a block" do
+        it "returns an instance of BlockSubresource" do
+          root.locate("block_subresource").class.should == BlockSubresource
+        end
+      end
+    end
+
     describe "GET /subresource" do
       self.thin_logging = true
       before do
