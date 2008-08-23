@@ -46,7 +46,7 @@ module ThinRest
     end
     
     def get_resource(request)
-      path_parts(request).inject(root_resource) do |resource, child_resource_name|
+      path_parts(request).inject(root_resource.new(:connection => self)) do |resource, child_resource_name|
         resource.locate(child_resource_name)
       end
     end
