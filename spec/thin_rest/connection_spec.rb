@@ -10,10 +10,20 @@ module ThinRest
         stub(EventMachine).close_connection
       end
 
-      it "responds with the HTTP header excluding the Content-Length" do
-        expected_header = Connection::HEAD
-        mock(EventMachine).send_data( connection.signature, expected_header, expected_header.length ) {expected_header.length}
-        connection.send_head
+      context "when passed no arguments" do
+        it "responds with a 200 HTTP header excluding the Content-Length" do
+          expected_header = "HTTP/1.1 200 OK\r\nConnection: close\r\nServer: Thin Rest Server\r\n"
+          mock(EventMachine).send_data( connection.signature, expected_header, expected_header.length ) {expected_header.length}
+          connection.send_head
+        end
+      end
+
+      context "when passed 301" do
+        it "responds with a 301 HTTP header excluding the Content-Length" do
+          expected_header = "HTTP/1.1 301 OK\r\nConnection: close\r\nServer: Thin Rest Server\r\n"
+          mock(EventMachine).send_data( connection.signature, expected_header, expected_header.length ) {expected_header.length}
+          connection.send_head(301)
+        end
       end
     end
 

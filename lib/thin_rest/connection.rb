@@ -1,6 +1,5 @@
 module ThinRest
   class Connection < Thin::Connection
-    HEAD = "HTTP/1.1 200 OK\r\nConnection: close\r\nServer: Thin Rest Server\r\n".freeze
     attr_reader :resource, :rack_request
 
     def process
@@ -12,8 +11,12 @@ module ThinRest
       end
     end
 
-    def send_head
-      send_data(HEAD)
+    def send_head(status=200)
+      send_data(head(status))
+    end
+
+    def head(status)
+      "HTTP/1.1 #{status} OK\r\nConnection: close\r\nServer: Thin Rest Server\r\n"
     end
 
     def send_body(data)
