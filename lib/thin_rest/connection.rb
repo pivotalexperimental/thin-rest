@@ -4,11 +4,14 @@ module ThinRest
 
     def process
       guard_against_errors do
-        @rack_request = Rack::Request.new(@request.env)
         method = rack_request.request_method.downcase.to_sym
-        @resource = get_resource(rack_request)
+        @resource = get_resource
         resource.send(method)
       end
+    end
+
+    def rack_request
+      @rack_request ||= Rack::Request.new(@request.env)
     end
 
     def send_head(status=200)
@@ -48,8 +51,8 @@ module ThinRest
       handle_error e
     end
     
-    def get_resource(request)
-      path_parts(request).inject(root_resource) do |resource, child_resource_name|
+    def get_resource
+      path_parts.inject(root_resource) do |resource, child_resource_name|
         resource.locate(child_resource_name)
       end
     end
@@ -58,8 +61,8 @@ module ThinRest
       raise NotImplementedError
     end
 
-    def path_parts(request)
-      request.path_info.split('/').reject { |part| part == "" }
+    def path_parts
+      rack_request.path_info.split('/').reject { |part| part == "" }
     end
 
     def error_message(e)

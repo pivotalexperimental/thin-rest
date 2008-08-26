@@ -27,6 +27,14 @@ module ThinRest
           root.locate("block_subresource").foobar.should == root.foobar
         end
       end
+
+      context "/no_handler_subresource - route is not defined" do
+        it "raises a RoutingError" do
+          lambda do
+            root.locate("no_handler_subresource")
+          end.should raise_error(RoutingError)
+        end
+      end
     end
 
     describe "Delegations" do
