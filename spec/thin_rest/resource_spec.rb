@@ -23,6 +23,11 @@ module ThinRest
         it "returns an instance of BlockSubresource" do
           root.locate("block_subresource").class.should == BlockSubresource
         end
+
+        it "executes the block within the instance of the Resource" do
+          root.foobar.should_not be_nil
+          root.locate("block_subresource").foobar.should == root.foobar
+        end
       end
     end
 

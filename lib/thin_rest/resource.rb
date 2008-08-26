@@ -71,7 +71,7 @@ module ThinRest
     def locate(name)
       route_handler = self.class.routes[name] || self.class.routes[ANY]
       raise ::GameServer::Resources::InvalidRouteError.new(name, self) unless route_handler
-      route_handler.call(env, name)
+      instance_exec(env, name, &route_handler)
     end
 
     def unbind

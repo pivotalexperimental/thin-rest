@@ -55,8 +55,12 @@ end
 class Root < ThinRest::Resource
   property :connection
   route 'subresource', 'Subresource'
-  route 'block_subresource' do |env, name|
-    BlockSubresource.new(env)
+  route 'block_subresource' do |properties, name|
+    BlockSubresource.new(properties.merge(:foobar => foobar))
+  end
+
+  def foobar
+    :baz
   end
 end
 
@@ -79,5 +83,5 @@ class Subresource < ThinRest::Resource
 end
 
 class BlockSubresource < ThinRest::Resource
-
+  property :foobar
 end
