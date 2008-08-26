@@ -47,6 +47,7 @@ module ThinRest
 
     def request; connection.request; end
     def response; connection.response; end
+    def rack_request; connection.rack_request; end
 
     def get
       connection.send_head

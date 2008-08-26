@@ -2,17 +2,15 @@ require File.expand_path("#{File.dirname(__FILE__)}/../thin_rest_spec_helper")
 
 module ThinRest
   describe Resource do
-    attr_reader :connection
+    attr_reader :connection, :root
+    self.thin_logging = true
+    before do
+      @connection = create_connection
+      stub(EventMachine).close_connection
+      @root = Root.new(:connection => connection)
+    end
 
     describe "#locate" do
-      attr_reader :root
-      self.thin_logging = true
-      before do
-        @connection = create_connection
-        stub(EventMachine).close_connection
-        @root = Root.new(:connection => connection)
-      end
-
       context "/subresource - route is defined using a String" do
         it "returns an instance of Subresource" do
           root.locate("subresource").class.should == Subresource
@@ -31,13 +29,27 @@ module ThinRest
       end
     end
 
-    describe "GET /subresource" do
-      self.thin_logging = true
-      before do
-        @connection = create_connection
-        stub(EventMachine).close_connection
+    describe "Delegations" do
+      describe "#request" do
+        it "delegates to #connection" do
+          root.request.should == connection.request
+        end
       end
 
+      describe "#response" do
+        it "delegates to #connection" do
+          root.response.should == connection.response
+        end
+      end
+
+      describe "#rack_request" do
+        it "delegates to #connection" do
+          root.rack_request.should == connection.rack_request
+        end
+      end
+    end
+
+    describe "GET /subresource" do
       it "sends the GET response for the resource" do
         mock(connection).send_data(connection.head(200))
         expected_data = "GET response"
@@ -49,12 +61,6 @@ module ThinRest
     end
 
     describe "POST /subresource" do
-      self.thin_logging = true
-      before do
-        @connection = create_connection
-        stub(EventMachine).close_connection
-      end
-
       it "sends the POST response for the resource" do
         mock(connection).send_data(connection.head(200))
         expected_data = "POST response"
@@ -66,12 +72,6 @@ module ThinRest
     end
 
     describe "PUT /subresource" do
-      self.thin_logging = true
-      before do
-        @connection = create_connection
-        stub(EventMachine).close_connection
-      end
-
       it "sends the PUT response for the resource" do
         mock(connection).send_data(connection.head(200))
         expected_data = "PUT response"
@@ -83,12 +83,6 @@ module ThinRest
     end
 
     describe "DELETE /subresource" do
-      self.thin_logging = true
-      before do
-        @connection = create_connection
-        stub(EventMachine).close_connection
-      end
-
       it "sends the DELETE response for the resource" do
         mock(connection).send_data(connection.head(200))
         expected_data = "DELETE response"
