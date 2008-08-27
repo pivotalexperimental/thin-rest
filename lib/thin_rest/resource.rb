@@ -2,12 +2,18 @@ module ThinRest
   class Resource
     class << self
       def property(*names)
-        properties.concat(names)
+        names.each do |name|
+          my_properties << name.to_sym
+        end
         attr_reader *names
       end
 
       def properties
-        @properties ||= []
+        if superclass.respond_to?(:properties)
+          superclass.properties | my_properties
+        else
+          my_properties
+        end
       end
 
       def route(name, resource_type_name=nil, &block)
@@ -24,6 +30,10 @@ module ThinRest
       end
 
       protected
+      def my_properties
+        @my_properties ||= []
+      end
+
       def handle_dequeue_and_process_error(command, error)
         if command.connection
           command.connection.handle_error error
@@ -35,11 +45,12 @@ module ThinRest
     ANY = Object.new
 
     property :connection
-    attr_reader :event, :env
+    attr_reader :env
 
     def initialize(env={})
       @env = env
       env.each do |name, value|
+        raise ArgumentError, "Property #{name.to_sym} does not exist in #{self.class.properties}" unless self.class.properties.include?(name.to_sym)
         instance_variable_set("@#{name}", value)
       end
       after_initialize

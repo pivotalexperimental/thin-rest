@@ -35,6 +35,14 @@ module ThinRest
           end.should raise_error(RoutingError)
         end
       end
+
+      context "/wrong_property - passed in property not defined" do
+        it "raises a ArgumentError" do
+          lambda do
+            root.locate("wrong_property")
+          end.should raise_error(ArgumentError)
+        end
+      end
     end
 
     describe "Delegations" do
