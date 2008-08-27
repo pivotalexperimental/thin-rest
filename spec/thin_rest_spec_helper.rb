@@ -58,6 +58,7 @@ class Root < ThinRest::Resource
   route 'block_subresource' do |properties, name|
     BlockSubresource.new(properties.merge(:foobar => foobar))
   end
+  route 'error_subresource', 'ErrorSubresource'
 
   def foobar
     :baz
@@ -84,4 +85,10 @@ end
 
 class BlockSubresource < ThinRest::Resource
   property :foobar
+end
+
+class ErrorSubresource < ThinRest::Resource
+  def get
+    raise "An Error"
+  end
 end

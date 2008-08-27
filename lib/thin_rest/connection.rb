@@ -49,8 +49,12 @@ module ThinRest
     protected
     def guard_against_errors
       yield
-    rescue Exception => e
+    rescue RoutingError => e
       handle_error e
+    rescue Exception => e
+      wrapped_error = Exception.new("Error in #{rack_request.path_info} : #{e.message}")
+      wrapped_error.set_backtrace(e.backtrace)
+      handle_error wrapped_error
     end
     
     def get_resource
