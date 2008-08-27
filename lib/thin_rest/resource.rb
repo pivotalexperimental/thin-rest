@@ -50,7 +50,7 @@ module ThinRest
     def initialize(env={})
       @env = env
       env.each do |name, value|
-        raise ArgumentError, "Property #{name.to_sym} does not exist in #{self.class.properties}" unless self.class.properties.include?(name.to_sym)
+        raise ArgumentError, "Property #{name.inspect} does not exist in #{self.class.properties}" unless self.class.properties.include?(name.to_sym)
         instance_variable_set("@#{name}", value)
       end
       after_initialize
