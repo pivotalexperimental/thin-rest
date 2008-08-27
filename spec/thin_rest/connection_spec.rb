@@ -4,6 +4,42 @@ module ThinRest
   describe Connection do
     attr_reader :connection
 
+    describe "#process" do
+      attr_reader :connection, :result
+      before do
+        @connection = create_connection
+        stub(connection).socket_address {'0.0.0.0'}
+
+        @result = ""
+        stub(EventMachine).send_data do |signature, data, data_length|
+          result << data
+        end
+      end
+
+      context "when the call is successful" do
+        context "when the body is not empty" do
+          it "sends the response to the socket and closes the connection" do
+            mock(connection).close_connection_after_writing
+            connection.receive_data "GET /subresource HTTP/1.1\r\nHost: _\r\n\r\n"
+            result.should include("GET response")
+          end
+        end
+      end
+
+      context "when the call raises an error" do
+        it "logs the error and closes the connection" do
+          error = nil
+          mock(connection).log_error(is_a(Exception)) do |error_arg|
+            error = error_arg
+          end
+          mock(connection).close_connection
+
+          connection.receive_data "GET /error_subresource HTTP/1.1\r\nHost: _\r\n\r\n"
+          error.message.should =~ Regexp.new("/error_subresource")
+        end
+      end
+    end
+    
     describe "#send_head" do
       before do
         @connection = create_connection
