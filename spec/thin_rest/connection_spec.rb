@@ -25,6 +25,14 @@ module ThinRest
           connection.send_head(301)
         end
       end
+
+      context "when passed additional parameters" do
+        it "responds with the additional parameters in the header" do
+          expected_header = "HTTP/1.1 301 OK\r\nConnection: close\r\nServer: Thin Rest Server\r\nLocation: http://google.com\r\n"
+          mock(EventMachine).send_data( connection.signature, expected_header, expected_header.length ) {expected_header.length}
+          connection.send_head(301, :Location => "http://google.com")
+        end
+      end
     end
 
     describe "#send_body" do

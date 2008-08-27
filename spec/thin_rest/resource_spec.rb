@@ -59,7 +59,7 @@ module ThinRest
 
     describe "GET /subresource" do
       it "sends the GET response for the resource" do
-        mock(connection).send_data(connection.head(200))
+        mock(connection).send_data(connection.head(200, {}))
         expected_data = "GET response"
         expected_content_length = "Content-Length: #{expected_data.length}\r\n\r\n"
         mock(connection).send_data(expected_content_length) {expected_content_length.length}
@@ -70,7 +70,7 @@ module ThinRest
 
     describe "POST /subresource" do
       it "sends the POST response for the resource" do
-        mock(connection).send_data(connection.head(200))
+        mock(connection).send_data(connection.head(200, {}))
         expected_data = "POST response"
         expected_content_length = "Content-Length: #{expected_data.length}\r\n\r\n"
         mock(connection).send_data(expected_content_length) {expected_content_length.length}
@@ -81,7 +81,7 @@ module ThinRest
 
     describe "PUT /subresource" do
       it "sends the PUT response for the resource" do
-        mock(connection).send_data(connection.head(200))
+        mock(connection).send_data(connection.head(200, {}))
         expected_data = "PUT response"
         expected_content_length = "Content-Length: #{expected_data.length}\r\n\r\n"
         mock(connection).send_data(expected_content_length) {expected_content_length.length}
@@ -92,7 +92,7 @@ module ThinRest
 
     describe "DELETE /subresource" do
       it "sends the DELETE response for the resource" do
-        mock(connection).send_data(connection.head(200))
+        mock(connection).send_data(connection.head(200, {}))
         expected_data = "DELETE response"
         expected_content_length = "Content-Length: #{expected_data.length}\r\n\r\n"
         mock(connection).send_data(expected_content_length) {expected_content_length.length}
