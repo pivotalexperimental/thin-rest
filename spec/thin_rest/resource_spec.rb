@@ -37,10 +37,11 @@ module ThinRest
       end
 
       context "/wrong_property - passed in property not defined" do
-        it "raises a ArgumentError" do
-          lambda do
-            root.locate("wrong_property")
-          end.should raise_error(ArgumentError)
+        it "does not set an instance variable named after the wrong property" do
+          resource = root.locate("wrong_property")
+          resource.env.should == {:connection => connection, :baz => "wrong_property"}
+          resource.instance_variable_get("@connection").should == connection
+          resource.instance_variable_get("@baz").should be_nil
         end
       end
     end
