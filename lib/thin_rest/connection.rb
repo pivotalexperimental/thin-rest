@@ -22,7 +22,7 @@ module ThinRest
       head_output = additional_parameters.inject("HTTP/1.1 #{status} OK\r\nConnection: close\r\nServer: Thin Rest Server\r\n") do |header, parameters|
         header << "#{parameters[0]}: #{parameters[1]}\r\n"
       end
-      if additional_parameters[:'Content-length'] || additional_parameters['Content-length']
+      if additional_parameters[:'Content-Length'] || additional_parameters['Content-Length']
         head_output << "\r\n"
       end
       head_output
