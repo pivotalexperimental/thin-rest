@@ -51,6 +51,9 @@ module ThinRest
         end
       end
       ANY = Object.new
+      INVALID_ROUTE_HANDLER = lambda do |env, name|
+        FileNotFound.new(env)
+      end
 
       property :connection
       attr_reader :env
@@ -90,8 +93,7 @@ module ThinRest
       end
 
       def locate(name)
-        route_handler = self.class.routes[name] || self.class.routes[ANY]
-        raise RoutingError, "Invalid route: #{connection.rack_request.path_info} ; name: #{name}" unless route_handler
+        route_handler = self.class.routes[name] || self.class.routes[ANY] || INVALID_ROUTE_HANDLER
         instance_exec(env, name, &route_handler)
       end
 

@@ -43,10 +43,8 @@ module ThinRest
         end
 
         context "/no_handler_subresource - route is not defined" do
-          it "raises a RoutingError" do
-            lambda do
-              root.locate("no_handler_subresource")
-            end.should raise_error(RoutingError)
+          it "returns a FileNotFound resource" do
+            root.locate("no_handler_subresource").class.should == Resources::FileNotFound
           end
         end
 
@@ -88,6 +86,14 @@ module ThinRest
           mock(connection).send_data(expected_content_length) {expected_content_length.length}
           mock(connection).send_data(expected_data) {expected_data.length}
           connection.receive_data("GET /subresource HTTP/1.1\r\nHost: _\r\n\r\n")
+        end
+      end
+
+      describe "GET /no_handler_subresource" do
+        it "renders an error page" do
+          stub(connection).send_data
+          mock(connection).send_data(Regexp.new("File /no_handler_subresource not found"))
+          connection.receive_data("GET /no_handler_subresource HTTP/1.1\r\nHost: _\r\n\r\n")
         end
       end
 

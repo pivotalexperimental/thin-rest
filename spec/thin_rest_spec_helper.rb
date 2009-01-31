@@ -32,7 +32,6 @@ class Spec::ExampleGroup
     stub(EventMachine).add_timer
     Thin::Logging.silent = !self.class.thin_logging
     Thin::Logging.debug = self.class.thin_logging
-    Thin::Logging.trace = false
   end
 
   after(:each) do
