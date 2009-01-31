@@ -1,6 +1,12 @@
 module ThinRest
   module Resources
     class ResourceNotFound < Resource
+      class << self
+        def default_handler(env, name)
+          new(env)
+        end
+      end
+
       property :name
       def get
         connection.send_head(404)
