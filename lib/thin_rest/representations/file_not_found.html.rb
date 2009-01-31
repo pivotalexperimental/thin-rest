@@ -10,7 +10,7 @@ module Representations
     end
 
     def message
-      "File #{@path} not found"
+      "File #{path} not found"
     end
   end
 end

@@ -90,9 +90,10 @@ module ThinRest
       end
 
       describe "GET /no_handler_subresource" do
-        it "renders an error page" do
+        it "renders an error page and logs the error" do
           stub(connection).send_data
           mock(connection).send_data(Regexp.new("File /no_handler_subresource not found"))
+          mock(connection).log_error(is_a(ThinRest::RoutingError))
           connection.receive_data("GET /no_handler_subresource HTTP/1.1\r\nHost: _\r\n\r\n")
         end
       end

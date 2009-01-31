@@ -16,6 +16,10 @@ module Representations
       yield(self)
     end
 
+    def path
+      helpers.rack_request.path_info
+    end
+
     def title
       element("title", "Thin Rest")
     end
