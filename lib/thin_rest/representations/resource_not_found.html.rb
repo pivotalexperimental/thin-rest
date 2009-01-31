@@ -1,5 +1,5 @@
 module Representations
-  class FileNotFound < Page
+  class ResourceNotFound < Page
     protected
     def body_content
       h1 message

@@ -2,7 +2,7 @@ require File.expand_path("#{File.dirname(__FILE__)}/../../thin_rest_spec_helper"
 
 module ThinRest
   module Resources
-    describe FileNotFound do
+    describe ResourceNotFound do
       describe "GET /invalid_path" do
         it "returns a page with a of files in the directory" do
           mock(connection).send_head(404)

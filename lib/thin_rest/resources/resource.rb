@@ -52,7 +52,7 @@ module ThinRest
       end
       ANY = Object.new
       INVALID_ROUTE_HANDLER = lambda do |env, name|
-        FileNotFound.new(env)
+        ResourceNotFound.new(env)
       end
 
       property :connection
