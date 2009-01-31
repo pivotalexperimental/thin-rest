@@ -2,10 +2,9 @@ require File.expand_path("#{File.dirname(__FILE__)}/../thin_rest_spec_helper")
 
 module ThinRest
   describe Resource do
-    attr_reader :connection, :root
+    attr_reader :root
     self.thin_logging = true
     before do
-      @connection = create_connection
       stub(EventMachine).close_connection
       @root = Root.new(:connection => connection)
     end

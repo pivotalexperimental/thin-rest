@@ -31,7 +31,12 @@ module Spec::Example::ExampleGroupMethods
   attr_writer :thin_logging
 end
 
-module Spec::Example::ExampleMethods
+class Spec::ExampleGroup
+  attr_reader :connection
+  before do
+    @connection = create_connection
+  end
+
   def create_connection(guid = Guid.new.to_s)
     connection = TestConnection.new(guid)
     connection.backend = Object.new

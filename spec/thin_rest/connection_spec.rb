@@ -2,12 +2,9 @@ require File.expand_path("#{File.dirname(__FILE__)}/../thin_rest_spec_helper")
 
 module ThinRest
   describe Connection do
-    attr_reader :connection
-
     describe "#process" do
       attr_reader :result
       before do
-        @connection = create_connection
         stub(connection).socket_address {'0.0.0.0'}
 
         @result = ""
