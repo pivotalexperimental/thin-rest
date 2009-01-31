@@ -6,8 +6,24 @@ require "guid"
 
 Spec::Runner.configure do |config|
   config.mock_with :rr
+end
 
-  config.before do
+class Spec::ExampleGroup
+  class << self
+    def thin_logging
+      if @thin_logging.nil?
+        return false
+      else
+        @thin_logging
+      end
+    end
+    attr_writer :thin_logging
+  end
+
+  attr_reader :connection
+  before do
+    @connection = create_connection
+
     stub(EventMachine).send_data {raise "EventMachine.send_data needs to be stubbed or mocked out"}
     stub(EventMachine).close_connection {raise "EventMachine.close_connection needs to be stubbed or mocked out"}
     stub(EventMachine).close_connection_after_writing {raise "EventMachine.close_connection_after_writing needs to be stubbed or mocked out"}
@@ -18,23 +34,10 @@ Spec::Runner.configure do |config|
     Thin::Logging.debug = self.class.thin_logging
     Thin::Logging.trace = false
   end
-end
 
-module Spec::Example::ExampleGroupMethods
-  def thin_logging
-    if @thin_logging.nil?
-      return false
-    else
-      @thin_logging
-    end
-  end
-  attr_writer :thin_logging
-end
-
-class Spec::ExampleGroup
-  attr_reader :connection
-  before do
-    @connection = create_connection
+  after(:each) do
+    Thin::Logging.silent = true
+    Thin::Logging.debug = false
   end
 
   def create_connection(guid = Guid.new.to_s)
