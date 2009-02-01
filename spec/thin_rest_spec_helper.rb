@@ -118,8 +118,10 @@ class BlockSubresource < ThinRest::Resources::Resource
 end
 
 class ErrorSubresource < ThinRest::Resources::Resource
+  ERROR_MESSAGE = "An Error"
+
   def get
-    raise "An Error"
+    raise ERROR_MESSAGE
   end
 end
 

@@ -75,7 +75,7 @@ module ThinRest
 
     def handle_error(error)
       log_error error
-      close_connection rescue nil
+      Resources::InternalError.new(:connection => self, :error => error).get
     rescue Exception => unexpected_error
       log_error unexpected_error
     end
