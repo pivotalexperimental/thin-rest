@@ -10,8 +10,8 @@ module Representations
       end
     end
 
-    def title
-      element("title", error.message)
+    def title_text
+      error.message
     end
   end
 end

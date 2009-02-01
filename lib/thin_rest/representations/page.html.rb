@@ -5,9 +5,8 @@ module Representations
       html :xmlns => "http://www.w3.org/1999/xhtml", :"xml:lang" => "en" do
         head do
           meta :"http-equiv" => "Content-Type", :content => "text/html;charset=UTF-8"
-          title
-          script_elements
-          link_elements
+          title title_text          
+          head_content
         end
         body do
           body_content(&block)
@@ -16,16 +15,19 @@ module Representations
     end
 
     protected
+    def head_content
+    end
+
+    def title_text
+      "Thin Rest"
+    end
+
     def body_content(&block)
       yield(self)
     end
 
     def path
       helpers.rack_request.path_info
-    end
-
-    def title
-      element("title", "Thin Rest")
     end
 
     def script_elements

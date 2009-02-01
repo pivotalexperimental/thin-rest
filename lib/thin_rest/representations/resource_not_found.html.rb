@@ -5,8 +5,8 @@ module Representations
       h1 message
     end
 
-    def title
-      element("title", message)
+    def title_text
+      message
     end
 
     def message
